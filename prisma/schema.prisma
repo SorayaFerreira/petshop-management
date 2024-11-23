@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
+  Pet   Pet[]
+}
+
+model Pet {
+  id           Int           @id @default(autoincrement())
+  name         String
+  type         String?
+  age          Int?
+  id_client    Int
+  client       Client        @relation(fields: [id_client], references: [id])
+  appointments Appointment[]
+}
+
+model Service {
+  id                 Int                  @id @default(autoincrement())
+  description        String
+  price              Decimal              @db.Decimal(9, 2)
+  AppointmentService AppointmentService[]
+}
+
+model AppointmentService {
+  id             Int         @id @default(autoincrement())
+  id_appointment Int
+  appointment    Appointment @relation(fields: [id_appointment], references: [id])
+  id_service     Int
+  service        Service     @relation(fields: [id_service], references: [id])
+}
+
+model Appointment {
+  id                 Int                  @id @default(autoincrement())
+  date               DateTime
+  pet                Pet                  @relation(fields: [id_pet], references: [id])
+  id_pet             Int
+  employee           Employee             @relation(fields: [id_employee], references: [id])
+  id_employee        Int
+  AppointmentService AppointmentService[]
+}
+
+model Employee {
+  id          Int           @id @default(autoincrement())
+  name        String
+  role        String
+  Appointment Appointment[]
+}
