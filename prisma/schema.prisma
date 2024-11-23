@@ -14,10 +14,10 @@ datasource db {
 }
 
 model Client {
-  id    Int    @id @default(autoincrement())
+  cpf   String @id @db.VarChar(11)
   email String @unique
   name  String
-  Pet   Pet[]
+  pets  Pet[]
 }
 
 model Pet {
@@ -25,16 +25,16 @@ model Pet {
   name         String
   type         String?
   age          Int?
-  id_client    Int
-  client       Client        @relation(fields: [id_client], references: [id])
+  id_client    String        @db.VarChar(11)
+  client       Client        @relation(fields: [id_client], references: [cpf])
   appointments Appointment[]
 }
 
 model Service {
-  id                 Int                  @id @default(autoincrement())
-  description        String
-  price              Decimal              @db.Decimal(9, 2)
-  AppointmentService AppointmentService[]
+  id                  Int                  @id @default(autoincrement())
+  description         String
+  price               Decimal              @db.Decimal(9, 2)
+  appointmentServices AppointmentService[]
 }
 
 model AppointmentService {
@@ -46,18 +46,18 @@ model AppointmentService {
 }
 
 model Appointment {
-  id                 Int                  @id @default(autoincrement())
-  date               DateTime
-  pet                Pet                  @relation(fields: [id_pet], references: [id])
-  id_pet             Int
-  employee           Employee             @relation(fields: [id_employee], references: [id])
-  id_employee        Int
-  AppointmentService AppointmentService[]
+  id                  Int                  @id @default(autoincrement())
+  date                DateTime
+  pet                 Pet                  @relation(fields: [id_pet], references: [id])
+  id_pet              Int
+  employee            Employee             @relation(fields: [id_employee], references: [cpf])
+  id_employee         String               @db.VarChar(11)
+  appointmentServices AppointmentService[]
 }
 
 model Employee {
-  id          Int           @id @default(autoincrement())
-  name        String
-  role        String
-  Appointment Appointment[]
+  cpf          String        @id @db.VarChar(11)
+  name         String
+  role         String
+  appointments Appointment[]
 }
