@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: petshop-db
+    environment:
+      - POSTGRES_DB=petshop
+      - POSTGRES_USER=petshop_user
+      - POSTGRES_PASSWORD=petshop_password
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - petshop-db-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: petshop-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_started
+    environment:
+      - DATABASE_URL=postgresql://petshop_user:petshop_password@db:5432/petshop?connect_timeout=300
+    command: [ "sh", "-c", "npx prisma migrate dev --name init && npm start" ]
+
+volumes:
+  petshop-db-data:
+    driver: local
