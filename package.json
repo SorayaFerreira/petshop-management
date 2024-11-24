@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "swagger-autogen": "node ./docs/swagger.js"
+    "start": "node src/app.js",
+    "swagger-autogen": "node ./docs/swagger.js",
+    "prisma-migrate-dev": "docker exec myApp npx prisma migrate dev",
+    "prisma-studio": "docker exec myApp npx prisma studio"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,7 @@
     "express": "^4.21.1",
     "prisma": "^5.22.0",
     "swagger-autogen": "^2.23.7",
+    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }
 }

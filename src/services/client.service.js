@@ -16,12 +16,26 @@ class ClientService extends BaseService {
 
     async getById(id) {
         return await this.model.findUnique({
-            where: { id: parseInt(id) },
+            where: { cpf: id },
             include: {
                 pets: true
             },
         });
     }
+
+    async update(id, data) {
+        return await this.model.update({
+            where: { cpf: id },
+            data,
+        });
+    }
+
+    async delete(id) {
+        return await this.model.delete({
+            where: { cpf: id }
+        });
+    }
+
 }
 
 module.exports = new ClientService();

@@ -5,6 +5,7 @@ const clientRoutes = require('./routes/client.routes');
 const employeeRoutes = require('./routes/employee.routes');
 const petRoutes = require('./routes/pet.routes');
 const serviceRoutes = require('./routes/service.routes');
+const swaggerJSDoc = require('swagger-jsdoc');
 
 app.use(express.json());
 

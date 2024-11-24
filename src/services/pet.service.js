@@ -9,7 +9,8 @@ class PetService extends BaseService {
     async getAll() {
         return await this.model.findMany({
             include: {
-                client: true
+                client: true,
+                appointments: true
             },
         });
     }
@@ -18,7 +19,8 @@ class PetService extends BaseService {
         return await this.model.findUnique({
             where: { id: parseInt(id) },
             include: {
-                client: true
+                client: true,
+                appointments: true
             },
         });
     }

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.0.0",
+    "version": "1.0.0",
     "title": "Petshop Api",
     "description": "API for Managing Petshops",
     "contact": {
@@ -13,31 +13,29 @@
   "basePath": "/",
   "tags": [
     {
-      "name": "Employee",
-      "description": "Employee CRUD"
+      "name": "Appointment",
+      "description": "Appointments CRUD"
     },
     {
       "name": "Client",
       "description": "Client CRUD"
     },
     {
-      "name": "Appointments",
-      "description": "Appointments CRUD"
+      "name": "Employee",
+      "description": "Employee CRUD"
     },
-    {
-      "name": "Services",
-      "description": "Services CRUD"
-    },
-    null,
     {
       "name": "Pet",
       "description": "Pet CRUD"
+    },
+    {
+      "name": "Service",
+      "description": "Services CRUD"
     }
   ],
   "schemes": [
     "http"
   ],
-  "securityDefinitions": {},
   "consumes": [
     "application/json"
   ],
@@ -45,92 +43,425 @@
     "application/json"
   ],
   "paths": {
-    "/clients": {
+    "/appointments": {
       "get": {
-        "description": "",
+        "summary": "Retrieve all appointments",
+        "tags": [
+          "Appointment"
+        ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "List of all appointments"
           }
         }
       }
     },
-    "/client/{id}": {
+    "/appointment/{id}": {
       "get": {
-        "description": "",
+        "summary": "Retrieve appointment details by ID",
+        "tags": [
+          "Appointment"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "schema": {
+              "type": "integer",
+              "example": "1"
+            }
           }
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Details of the appointment"
           }
         }
       },
       "put": {
-        "description": "",
+        "summary": "Update an appointment by ID",
+        "tags": [
+          "Appointment"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "Appointment ID",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "appointment",
+            "in": "body",
+            "description": "Update an Appointment",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dateAndTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2025-01-10T16:20:00Z"
+                }
+              }
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Appointment successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": "1"
+                    },
+                    "dateAndTime": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-11-25T15:30:00Z"
+                    },
+                    "id_pet": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "id_employee": {
+                      "type": "string",
+                      "example": "00000000001"
+                    },
+                    "appointmentServices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id_service": {
+                            "type": "integer",
+                            "example": 2
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data provided"
+          },
+          "404": {
+            "description": "Appointment not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
       "delete": {
-        "description": "",
+        "summary": "Delete an appointment by ID",
+        "tags": [
+          "Appointment"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer",
+            "schema": {
+              "type": "integer",
+              "example": "1"
+            }
           }
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Appointment successfully deleted"
+          }
+        }
+      }
+    },
+    "/appointment": {
+      "post": {
+        "summary": "Create a new appointment",
+        "tags": [
+          "Appointment"
+        ],
+        "parameters": [
+          {
+            "name": "appointment",
+            "in": "body",
+            "description": "Add appointment",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dateAndTime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2024-11-24T15:00:00Z"
+                },
+                "id_pet": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "id_employee": {
+                  "type": "string",
+                  "example": "12345678902"
+                },
+                "appointmentServices": {
+                  "type": "object",
+                  "properties": {
+                    "create": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id_service": {
+                            "type": "integer",
+                            "example": 1
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "dateAndTime",
+                "id_pet",
+                "id_employee",
+                "appointmentServices"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Appointment successfully created"
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "404": {
+            "description": "Pet or Employee not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/clients": {
+      "get": {
+        "summary": "Retrieve all clients",
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "default": {
+            "description": "List of all clients"
+          }
+        }
+      }
+    },
+    "/client/{cpf}": {
+      "get": {
+        "summary": "Retrieve client details by CPF",
+        "tags": [
+          "Client"
+        ],
+        "parameters": [
+          {
+            "name": "cpf",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "12345678901"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Details of the client"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a client by CPF",
+        "tags": [
+          "Client"
+        ],
+        "parameters": [
+          {
+            "name": "cpf",
+            "in": "path",
+            "description": "Client CPF",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "12345678901"
+            }
+          },
+          {
+            "name": "client",
+            "in": "body",
+            "description": "Dados do cliente a serem atualizados",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "teste@petshop.com"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Napoleão Bonaparte"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cpf": {
+                      "type": "string",
+                      "example": "00000000000"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "antonio@petshop.com"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Antonio Nantes"
+                    },
+                    "role": {
+                      "type": "string",
+                      "example": "Lavador de Cachorro"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Cliente não encontrado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a client by CPF",
+        "tags": [
+          "Client"
+        ],
+        "parameters": [
+          {
+            "name": "cpf",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "type": "string",
+              "example": "12345678901"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Client successfully deleted"
           }
         }
       }
     },
     "/client": {
       "post": {
-        "description": "",
+        "summary": "Create a new client",
+        "tags": [
+          "Client"
+        ],
+        "parameters": [
+          {
+            "name": "client",
+            "in": "body",
+            "description": "Client object that needs to be created",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cpf": {
+                  "type": "string",
+                  "example": "12345678901"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "client@example.com"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "João"
+                }
+              },
+              "required": [
+                "cpf",
+                "email",
+                "name"
+              ]
+            }
+          }
+        ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "New client successfully created"
           }
         }
       }
     },
     "/employees": {
       "get": {
-        "description": "",
+        "summary": "Retrieve all employees",
+        "tags": [
+          "Employee"
+        ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "List of all employees"
           }
         }
       }
     },
-    "/employee/{id}": {
+    "/employee/{cpf}": {
       "get": {
-        "description": "",
+        "summary": "Retrieve employee details by CPF",
+        "tags": [
+          "Employee"
+        ],
         "parameters": [
           {
-            "name": "id",
+            "name": "cpf",
             "in": "path",
             "required": true,
             "type": "string"
@@ -138,98 +469,214 @@
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Details of the employee"
           }
         }
       },
       "put": {
-        "description": "",
+        "summary": "Update an employee by CPF",
+        "tags": [
+          "Employee"
+        ],
         "parameters": [
           {
-            "name": "id",
+            "name": "cpf",
             "in": "path",
+            "description": "Employee CPF",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "example": "12345678902"
+            }
+          },
+          {
+            "name": "employee",
+            "in": "body",
+            "description": "Update employee by CPF",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "example": "lavador de cachorro e gato"
+                }
+              }
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Employee successfully updated"
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "404": {
+            "description": "Employee not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
       "delete": {
-        "description": "",
+        "summary": "Delete an employee by CPF",
+        "tags": [
+          "Employee"
+        ],
         "parameters": [
           {
-            "name": "id",
+            "name": "cpf",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "schema": {
+              "type": "string",
+              "example": "12345678902"
+            }
           }
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Employee successfully deleted"
           }
         }
       }
     },
     "/employee": {
       "post": {
-        "description": "",
+        "summary": "Create a new employee",
+        "tags": [
+          "Employee"
+        ],
+        "parameters": [
+          {
+            "name": "employee",
+            "in": "body",
+            "description": "Create a new Employee",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "cpf": {
+                  "type": "string",
+                  "example": "12345678902"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Antonio"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "lavador de cachorro"
+                }
+              },
+              "required": [
+                "cpf",
+                "name",
+                "role"
+              ]
+            }
+          }
+        ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Employee successfully created"
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
     "/pets": {
       "get": {
-        "description": "",
+        "summary": "Retrieve all pets",
+        "tags": [
+          "Pet"
+        ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "List of all pets"
           }
         }
       }
     },
     "/pet/{id}": {
       "get": {
-        "description": "",
+        "summary": "Retrieve pet details by ID",
+        "tags": [
+          "Pet"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
           }
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Details of the pet"
           }
         }
       },
       "put": {
-        "description": "",
+        "summary": "Update a pet by ID",
+        "tags": [
+          "Pet"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "pet",
+            "in": "body",
+            "description": "Update pet by ID",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "leão"
+                },
+                "age": {
+                  "type": "integer",
+                  "example": 10
+                }
+              }
+            }
           }
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Updated pet details"
           }
         }
       },
       "delete": {
-        "description": "",
+        "summary": "Delete a pet by ID",
+        "tags": [
+          "Pet"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -240,103 +687,255 @@
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Pet successfully deleted"
           }
         }
       }
     },
     "/pet": {
       "post": {
-        "description": "",
+        "summary": "Create a new pet",
+        "tags": [
+          "Pet"
+        ],
+        "parameters": [
+          {
+            "name": "pet",
+            "in": "body",
+            "description": "Add a pet",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "spyke"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "cachorro"
+                },
+                "age": {
+                  "type": "integer",
+                  "example": 6
+                },
+                "id_client": {
+                  "type": "string",
+                  "example": "12345678901"
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "age",
+                "id_client"
+              ]
+            }
+          }
+        ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "New pet successfully created"
           }
         }
       }
     },
     "/services": {
       "get": {
-        "description": "",
+        "summary": "Retrieve all services",
+        "tags": [
+          "Service"
+        ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "List of all services"
           }
         }
       }
     },
     "/service/{id}": {
       "get": {
-        "description": "",
+        "summary": "Retrieve service details by ID",
+        "tags": [
+          "Service"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
           }
         ],
         "responses": {
           "default": {
-            "description": ""
+            "description": "Details of the service"
           }
         }
       },
       "put": {
-        "description": "",
+        "summary": "Update a service by ID",
+        "tags": [
+          "Service"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "service",
+            "in": "body",
+            "description": "Service object that needs to be updated",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "banho e tosa"
+                },
+                "price": {
+                  "type": "number",
+                  "example": 100
+                }
+              }
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Service successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "banho e tosa"
+                    },
+                    "price": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "404": {
+            "description": "Service not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       },
       "delete": {
-        "description": "",
+        "summary": "Delete a service by ID",
+        "tags": [
+          "Service"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID of the service to be deleted",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Service successfully deleted"
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "404": {
+            "description": "Service not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
     },
     "/service": {
       "post": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
+        "summary": "Create a new service",
+        "tags": [
+          "Service"
+        ],
+        "parameters": [
+          {
+            "name": "service",
+            "in": "body",
+            "description": "Service object that needs to be created",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "example": "banho"
+                },
+                "price": {
+                  "type": "number",
+                  "example": 50
+                }
+              },
+              "required": [
+                "type",
+                "price"
+              ]
+            }
           }
-        }
-      }
-    }
-  },
-  "definitions": {
-    "errorResponse.404": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "string",
-          "example": "404"
-        },
-        "message": {
-          "type": "string",
-          "example": "Not found"
+        ],
+        "responses": {
+          "201": {
+            "description": "Add a new Service to the Petshop",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "banho"
+                    },
+                    "price": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     }

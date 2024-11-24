@@ -11,6 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // url      = "postgresql://petshop_user:petshop_password@db:5432/petshop"
 }
 
 model Client {
@@ -26,13 +27,13 @@ model Pet {
   type         String?
   age          Int?
   id_client    String        @db.VarChar(11)
-  client       Client        @relation(fields: [id_client], references: [cpf])
+  client       Client        @relation(fields: [id_client], references: [cpf], onDelete: Cascade)
   appointments Appointment[]
 }
 
 model Service {
   id                  Int                  @id @default(autoincrement())
-  description         String
+  type                String               @unique
   price               Decimal              @db.Decimal(9, 2)
   appointmentServices AppointmentService[]
 }
@@ -40,17 +41,17 @@ model Service {
 model AppointmentService {
   id             Int         @id @default(autoincrement())
   id_appointment Int
-  appointment    Appointment @relation(fields: [id_appointment], references: [id])
+  appointment    Appointment @relation(fields: [id_appointment], references: [id], onDelete: Cascade)
   id_service     Int
   service        Service     @relation(fields: [id_service], references: [id])
 }
 
 model Appointment {
   id                  Int                  @id @default(autoincrement())
-  date                DateTime
-  pet                 Pet                  @relation(fields: [id_pet], references: [id])
+  dateAndTime         DateTime
+  pet                 Pet                  @relation(fields: [id_pet], references: [id], onDelete: Cascade)
   id_pet              Int
-  employee            Employee             @relation(fields: [id_employee], references: [cpf])
+  employee            Employee             @relation(fields: [id_employee], references: [cpf], onDelete: Cascade)
   id_employee         String               @db.VarChar(11)
   appointmentServices AppointmentService[]
 }
