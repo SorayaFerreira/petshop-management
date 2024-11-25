@@ -5,7 +5,7 @@ services:
     image: postgres:16
     container_name: petshop-db
     environment:
-      - POSTGRES_DB=petshop_user  
+      - POSTGRES_DB=petshop
       - POSTGRES_USER=petshop_user
       - POSTGRES_PASSWORD=petshop_password
     restart: always
@@ -14,7 +14,7 @@ services:
     volumes:
       - petshop-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U petshop_user"]
+      test: [ "CMD-SHELL", "pg_isready -U petshop_user -d petshop" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -26,10 +26,10 @@ services:
       - "3000:3000"
     depends_on:
       db:
-        condition: service_healthy  
+        condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://petshop_user:petshop_password@db:5432/petshop_user?connect_timeout=300 
-    command: [ "sh", "-c", "npx prisma migrate deploy && npm start" ]  
+      - DATABASE_URL=postgresql://petshop_user:petshop_password@db:5432/petshop?connect_timeout=300
+    command: [ "sh", "-c", "npx prisma migrate deploy && npm start" ]
 
 volumes:
   petshop-db-data:
