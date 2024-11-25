@@ -58,13 +58,15 @@ CREATE TABLE "Employee" (
 --CreateTable
 CREATE TABLE "Appointment_Log" (
     "log_id" SERIAL PRIMARY KEY,        
-    "operation" TEXT NOT NULL,          
+    "operation" TEXT NOT NULL,  
+    "log_time" TIMESTAMP DEFAULT NOW(),        
     "id_appointment" INTEGER NOT NULL,              
-    "appointment_date" TIMESTAMP,            
+    "old_ap_date" TIMESTAMP,
+    "current_ap_date" TIMESTAMP,            
     "id_pet" INTEGER,                   
-    "id_employee" VARCHAR(11)  
-);
-
+    "id_employee" VARCHAR(11)
+);             
+        
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Client_email_key" ON "Client"("email");
@@ -90,17 +92,20 @@ ALTER TABLE "Appointment" ADD CONSTRAINT "Appointment_id_employee_fkey" FOREIGN 
 CREATE OR REPLACE FUNCTION log_table() RETURNS TRIGGER AS $$
 BEGIN
   IF (TG_OP = 'UPDATE') THEN
-    INSERT INTO "Appointment_Log"("operation", "id_appointment", "appointment_date", "id_pet", "id_employee")
-    VALUES (TG_OP, OLD."id", OLD."dateAndTime", OLD."id_pet", OLD."id_employee");
+    INSERT INTO "Appointment_Log"("operation","log_time", "id_appointment", "old_ap_date", "current_ap_date", "id_pet", "id_employee")
+
+    VALUES (TG_OP, NOW(), OLD."id", OLD."dateAndTime", NEW."dateAndTime", OLD."id_pet", OLD."id_employee");
 
   ELSIF (TG_OP = 'DELETE') THEN
-    INSERT INTO "Appointment_Log"("operation", "id_appointment", "appointment_date", "id_pet", "id_employee")
-    VALUES (TG_OP, OLD."id", OLD."dateAndTime", OLD."id_pet", OLD."id_employee");
+    INSERT INTO "Appointment_Log"("operation","log_time", "id_appointment", "old_ap_date", "current_ap_date", "id_pet", "id_employee")
+
+    VALUES (TG_OP, NOW(), OLD."id", OLD."dateAndTime", NEW."dateAndTime", OLD."id_pet", OLD."id_employee");
 
   END IF;
   RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
+
 
 CREATE TRIGGER trg_log_appointment
 AFTER UPDATE OR DELETE ON "Appointment"

@@ -65,9 +65,12 @@ model Employee {
 
 model Appointment_Log {
     log_id Int @id @default(autoincrement())                 
-    operation String          
+    operation String
+    log_time DateTime          
     id_appointment Int           
-    appointment_date DateTime            
-    id_pet Int             
-    id_employee String @db.VarChar(11) 
+    old_ap_date DateTime
+    current_ap_date DateTime            
+    old_id_pet Int             
+    old_id_employee String @db.VarChar(11) 
 }
+
