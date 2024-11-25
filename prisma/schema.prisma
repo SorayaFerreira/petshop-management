@@ -62,3 +62,12 @@ model Employee {
   role         String
   appointments Appointment[]
 }
+
+model Appointment_Log {
+    log_id Int @id @default(autoincrement())                 
+    operation String          
+    id_appointment Int           
+    appointment_date DateTime            
+    id_pet Int             
+    id_employee String @db.VarChar(11) 
+}
