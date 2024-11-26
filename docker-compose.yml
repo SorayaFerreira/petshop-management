@@ -13,6 +13,11 @@ services:
       - "5432:5432"
     volumes:
       - petshop-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U petshop_user -d petshop" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
@@ -21,10 +26,10 @@ services:
       - "3000:3000"
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://petshop_user:petshop_password@db:5432/petshop?connect_timeout=300
-    command: [ "sh", "-c", "npx prisma migrate dev --name init && npm start" ]
+    command: [ "sh", "-c", "npx prisma migrate deploy && npm start" ]
 
 volumes:
   petshop-db-data:
